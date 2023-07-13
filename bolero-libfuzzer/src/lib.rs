@@ -19,7 +19,7 @@ pub mod fuzzer {
         pub fn LLVMFuzzerStartTest(a: c_int, b: *const *const c_char) -> c_int;
     }
 
-    static mut TESTFN: Option<&mut dyn FnMut(&[u8]) -> bool> = None;
+    static mut TESTFN: Option<&mut dyn FnMut(&[u8])> = None;
 
     #[derive(Debug, Default)]
     pub struct LibFuzzerEngine {
@@ -53,42 +53,37 @@ pub mod fuzzer {
 
             let driver_mode = self.driver_mode;
 
-            start(&mut |slice: &[u8]| -> bool {
+            start(&mut |slice: &[u8]| {
                 let mut input = ByteSliceTestInput::new(slice, driver_mode);
 
-                match test.test(&mut input) {
-                    Ok(_) => true,
-                    Err(error) => {
-                        eprintln!("test failed; shrinking input...");
+                if let Err(error) = test.test(&mut input) {
+                    eprintln!("test failed; shrinking input...");
 
-                        let shrunken =
-                            test.shrink(slice.to_vec(), None, driver_mode, self.shrink_time);
+                    let shrunken = test.shrink(slice.to_vec(), None, driver_mode, self.shrink_time);
 
-                        if let Some(shrunken) = shrunken {
-                            eprintln!("{:#}", shrunken);
-                        } else {
-                            eprintln!(
-                                "{:#}",
-                                TestFailure {
-                                    seed: None,
-                                    error,
-                                    input
-                                }
-                            );
-                        }
-
-                        false
+                    if let Some(shrunken) = shrunken {
+                        eprintln!("{:#}", shrunken);
+                    } else {
+                        eprintln!(
+                            "{:#}",
+                            TestFailure {
+                                seed: None,
+                                error,
+                                input
+                            }
+                        );
                     }
+
+                    std::process::abort();
                 }
             })
         }
     }
 
-    fn start<F: FnMut(&[u8]) -> bool>(run_one_test: &mut F) -> Never {
+    fn start<F: FnMut(&[u8])>(run_one_test: &mut F) -> Never {
         unsafe {
-            TESTFN = Some(std::mem::transmute(
-                run_one_test as &mut dyn FnMut(&[u8]) -> bool,
-            ));
+            // The transmute extends the lifetime of run_one_test
+            TESTFN = Some(std::mem::transmute(run_one_test as &mut dyn FnMut(&[u8])));
         }
 
         // Libfuzzer can generate multiple jobs that can make the binary recurse.
@@ -138,11 +133,8 @@ pub mod fuzzer {
     #[no_mangle]
     pub unsafe extern "C" fn LLVMFuzzerTestOneInput(data: *const u8, size: usize) -> i32 {
         let data_slice = std::slice::from_raw_parts(data, size);
-        if (TESTFN.as_mut().expect("uninitialized test function"))(data_slice) {
-            0
-        } else {
-            1
-        }
+        (TESTFN.as_mut().expect("uninitialized test function"))(data_slice);
+        0
     }
 
     #[doc(hidden)]

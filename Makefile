@@ -61,7 +61,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -69,7 +69,7 @@ libfuzzer honggfuzz:
 	    fuzz_bytes \
 	    --manifest-path examples/basic/Cargo.toml \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -78,7 +78,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release true \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -86,7 +86,7 @@ libfuzzer honggfuzz:
 	    fuzz_generator \
 	    --manifest-path examples/basic/Cargo.toml \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -95,7 +95,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 1000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -103,7 +103,7 @@ libfuzzer honggfuzz:
 	    fuzz_operations \
 	    --manifest-path examples/basic/Cargo.toml \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@SHOULD_PANIC=1 cargo run \
 	    --features $@ \
@@ -112,7 +112,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    || true # TODO make this consistent
 	@SHOULD_PANIC=1 cargo run \
@@ -121,7 +121,7 @@ libfuzzer honggfuzz:
 	    tests::add_test \
 	    --manifest-path examples/basic/Cargo.toml \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    || true # TODO make this consistent
 	@SHOULD_PANIC=1 cargo run \
@@ -131,7 +131,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    || true # TODO make this consistent
 	@SHOULD_PANIC=1 cargo run \
@@ -140,7 +140,7 @@ libfuzzer honggfuzz:
 	    tests::other_test \
 	    --manifest-path examples/basic/Cargo.toml \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    || true # TODO make this consistent
 	@SHOULD_PANIC=1 cargo run \
@@ -150,7 +150,7 @@ libfuzzer honggfuzz:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 1000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    || true # TODO make this consistent
 
@@ -162,7 +162,7 @@ afl:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@cargo run \
 	    --features $@ \
@@ -171,7 +171,7 @@ afl:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER)
 	@rm -rf examples/basic/src/__fuzz__
 	@SHOULD_PANIC=1 cargo run \
@@ -181,7 +181,7 @@ afl:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    && exit 1 || true
 	@rm -rf examples/basic/src/__fuzz__
@@ -192,7 +192,7 @@ afl:
 	    --manifest-path examples/basic/Cargo.toml \
 	    --runs 100000 \
 	    --engine $@ \
-	    --release \
+	    --profile release \
 	    --sanitizer $(SANITIZER) \
 	    && exit 1 || true
 
